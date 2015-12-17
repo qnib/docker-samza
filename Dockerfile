@@ -8,7 +8,7 @@ ENV SCALA_VER=2.10.4 \
     HDFS_LIB_DIR=/opt/hadoop/share/hadoop/hdfs/lib \
     HDFS_URL=http://search.maven.org/remotecontent
 
-RUN yum install -y bsdtar
+RUN yum install -y bsdtar maven
 RUN mkdir -p ${HADOOP_YARN_HOME}/share/hadoop/hdfs/lib && \
     curl -fsL http://www.scala-lang.org/files/archive/scala-${SCALA_VER}.tgz |tar xzf - -C /opt/ && \
     cp /opt/scala-${SCALA_VER}/lib/{scala-compiler.jar,scala-library.jar} /opt/hadoop/share/hadoop/hdfs/lib/ && \
@@ -19,4 +19,10 @@ RUN curl -sLo ${HDFS_LIB_DIR}/grizzled-slf4j_${SAMZA_BASE_VER}-${SLF4J_VER}.jar 
 ADD opt/hadoop/etc/hadoop/core-site.xml /opt/hadoop/etc/hadoop/
 
 ## Hello Samza
-RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bsdtar xf - -C /opt/
+USER hadoop
+RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bsdtar xf - -C /opt/ && \
+    cd /opt/samza-hello-samza-master && \
+    sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' build.gradle 
+RUN mvn clean package
+USER root
+
