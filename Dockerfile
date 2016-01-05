@@ -19,10 +19,11 @@ RUN curl -sLo ${HDFS_LIB_DIR}/grizzled-slf4j_${SAMZA_BASE_VER}-${SLF4J_VER}.jar 
 ADD opt/hadoop/etc/hadoop/core-site.xml /opt/hadoop/etc/hadoop/
 
 ## Hello Samza
+RUN chown hadoop: /opt/ 
 USER hadoop
 RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bsdtar xf - -C /opt/ && \
     cd /opt/samza-hello-samza-master && \
-    sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' build.gradle 
-RUN mvn clean package
+    sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' build.gradle  && \
+    mvn clean package
 USER root
 
