@@ -31,4 +31,7 @@ RUN mkdir -p /opt/samza-hello-samza-master/deploy/ && \
     sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties
 USER root
 ADD opt/qnib/hadoop/bin/yarn.sh /opt/qnib/hadoop/bin/
+RUN echo "su - hadoop" >> /root/.bash_history && \
+    echo "./deploy/bin/run-job.sh --config-factory=org.apache.samza.config.factories.PropertiesConfigFactory --config-path=file://$PWD/deploy/config/wikipedia-feed.properties" >> /home/hadoop/.bash_history && \
+    echo "cd /opt/samza-hello-samza-master/" >> /home/hadoop/.bash_history
 
