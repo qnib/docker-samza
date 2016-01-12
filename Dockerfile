@@ -25,5 +25,10 @@ RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bs
     cd /opt/samza-hello-samza-master && \
     sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' build.gradle  && \
     mvn clean package
+RUN mkdir -p /opt/samza-hello-samza-master/deploy/ && \
+    tar xzf /opt/samza-hello-samza-master/target/hello-samza-0.10.0-dist.tar.gz -C /opt/samza-hello-samza-master/deploy/ && \
+    sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties && \
+    sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties
 USER root
+ADD opt/qnib/hadoop/bin/yarn.sh /opt/qnib/hadoop/bin/
 
