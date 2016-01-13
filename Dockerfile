@@ -28,7 +28,9 @@ RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bs
 RUN mkdir -p /opt/samza-hello-samza-master/deploy/ && \
     tar xzf /opt/samza-hello-samza-master/target/hello-samza-0.10.0-dist.tar.gz -C /opt/samza-hello-samza-master/deploy/ && \
     sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties && \
-    sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties
+    sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-feed.properties && \
+    sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' /opt/samza-hello-samza-master/deploy/config/wikipedia-parser.properties && \
+    sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-parser.properties
 USER root
 ADD opt/qnib/hadoop/bin/yarn.sh /opt/qnib/hadoop/bin/
 RUN echo "su - hadoop" >> /root/.bash_history && \
