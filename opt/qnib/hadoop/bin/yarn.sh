@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xe
+
 source /etc/bashrc.hadoop
 
 function check_hdfs {
@@ -17,9 +19,9 @@ trap "echo stopping yarn;su -c stop-yarn.sh hadoop; exit" HUP INT TERM EXIT
 # Wait for hdfs to be up'n'running
 check_hdfs
 
-sleep 5
+sleep 10
 
-chown -R hadoop: ${YARN_LOG_DIR}
+chown -R hadoop: ${YARN_LOG_DIR}/*
 
 su -c 'start-yarn.sh' hadoop
 
