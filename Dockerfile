@@ -18,11 +18,16 @@ RUN curl -sLo ${HDFS_LIB_DIR}/grizzled-slf4j_${SAMZA_BASE_VER}-${SLF4J_VER}.jar 
     curl -sLo ${HDFS_LIB_DIR}/samza-core_${SAMZA_BASE_VER}-${SAMZA_VER}.jar ${HDFS_URL}?filepath=org/apache/samza/samza-core_${SAMZA_BASE_VER}/${SAMZA_VER}/samza-core_${SAMZA_BASE_VER}-${SAMZA_VER}.jar
 ADD opt/hadoop/etc/hadoop/core-site.xml /opt/hadoop/etc/hadoop/
 
+## Samza
+RUN yum install -y git-core && \
+    git clone http://git-wip-us.apache.org/repos/asf/samza.git /opt/samza && \
+    cd /opt/samza && \
+    ./gradlew  publishToMavenLocal
 ## Hello Samza
 RUN chown hadoop: /opt/ 
 USER hadoop
-RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bsdtar xf - -C /opt/ && \
-    cd /opt/samza-hello-samza-master && \
+RUN curl -sfL https://github.com/apache/samza-hello-samza/archive/master.zip |bsdtar xf - -C /opt/ 
+RUN cd /opt/samza-hello-samza-master && \
     sed -i -e 's/localhost:2181/zookeeper.service.consul:2181/' build.gradle  && \
     mvn clean package
 RUN mkdir -p /opt/samza-hello-samza-master/deploy/ && \
@@ -33,7 +38,8 @@ RUN mkdir -p /opt/samza-hello-samza-master/deploy/ && \
     sed -i -e 's/localhost:9092/kafka.service.consul:9092/' /opt/samza-hello-samza-master/deploy/config/wikipedia-parser.properties
 USER root
 ADD opt/qnib/hadoop/bin/yarn.sh /opt/qnib/hadoop/bin/
-RUN echo "su - hadoop" >> /root/.bash_history && \
+RUN chmod 700 /var/empty/sshd && \
+    echo "su - hadoop" >> /root/.bash_history && \
     echo "./deploy/bin/run-job.sh --config-factory=org.apache.samza.config.factories.PropertiesConfigFactory --config-path=file://$PWD/deploy/config/wikipedia-feed.properties" >> /home/hadoop/.bash_history && \
     echo "cd /opt/samza-hello-samza-master/" >> /home/hadoop/.bash_history
 
