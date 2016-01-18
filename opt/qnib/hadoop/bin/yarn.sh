@@ -21,10 +21,11 @@ check_hdfs
 
 sleep 10
 
-chown -R hadoop: ${YARN_LOG_DIR}/*
+chown -R hadoop: ${YARN_LOG_DIR-/data/hadoopdata/logs/}/*
 
 su -c 'start-yarn.sh' hadoop
 
+set +x
 while [ true ];do
     sleep 1
 done
