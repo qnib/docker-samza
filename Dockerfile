@@ -18,6 +18,12 @@ RUN curl -sLo ${HDFS_LIB_DIR}/grizzled-slf4j_${SAMZA_BASE_VER}-${SLF4J_VER}.jar 
     curl -sLo ${HDFS_LIB_DIR}/samza-core_${SAMZA_BASE_VER}-${SAMZA_VER}.jar ${HDFS_URL}?filepath=org/apache/samza/samza-core_${SAMZA_BASE_VER}/${SAMZA_VER}/samza-core_${SAMZA_BASE_VER}-${SAMZA_VER}.jar
 ADD opt/hadoop/etc/hadoop/core-site.xml /opt/hadoop/etc/hadoop/
 
+## Samza
+RUN yum install -y git-core
+RUN git clone http://git-wip-us.apache.org/repos/asf/samza.git /opt/samza && \
+    cd /opt/samza && \
+    ./gradlew  publishToMavenLocal
+
 ## Hello Samza
 RUN chown hadoop: /opt/ 
 USER hadoop
